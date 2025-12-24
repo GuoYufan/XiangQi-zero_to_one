@@ -7,7 +7,6 @@
 #include <include/config.h>
 #include <include/Chess_Operate.h>
 
-
 /*
 《调试模式设置》
 GYF_Debug_Mode[0]：是否进行debug信息输出。
@@ -29,7 +28,7 @@ ColorCode *color=NULL;
 short current_player=0;
 short 第几回合=0;
 
-
+// 对结构体TheStep进行操作的函数
 void TheStep_show(TheStep *self)
 {
 	printf("from_x:%d\tfrom_y:%d\n"
@@ -41,7 +40,7 @@ void TheStep_show(TheStep *self)
 	self->from_index, self->to_index_of_flip, self->to_index_of_move);
 }
 
-
+// 用于查看例如全场（红方/黑方）棋子索引数组
 void show_整数数组(short *arr, short size, const char *prompt)
 {
 	printf(prompt);
@@ -71,9 +70,7 @@ void Game_show(Game *self)
 	printf("红棋数量：%d\n",self->红棋数量);
 	
 	show_整数数组(self->当前操作方的棋子的索引数组, self->当前操作方的棋子数量, "当前操作方的棋子的索引数组"); putchar(10);
-	printf("当前操作方的棋子数量：%d\n",self->当前操作方的棋子数量);getchar();
-
-	
+	printf("当前操作方的棋子数量：%d\n",self->当前操作方的棋子数量);getchar();	
 }
 
 
@@ -88,12 +85,12 @@ void 交换两个指针值(void **ofsv, void **defsv)
 	如果ofsv是red，defsv是black；
 	则切换到ofsv是black，defsv是red。
 	*/
-	void *temp = *ofsv;
+	void **temp = ofsv;
 	//printf("118l:temp=ofsv:%p = %p\n",temp,ofsv);
 	*ofsv = *defsv;
 	//printf("120l:o=d:%p = %p\n", *ofsv, *defsv);
-	*defsv = temp;
-	//printf("122l:d=t:%p = %p\n", *defsv, temp);
+	*defsv = *temp;
+	//printf("122l:d=t:%p = %p\n", *defsv, *temp);
 }
 
 
@@ -109,6 +106,18 @@ void Game_决定当前操作方与应对方信息(Game *game)
 	而是可以先盲选。
 	再看猜没猜对。
 	猜对就不用换，猜错就换。
+	
+	
+	在实参所在空间交换指针值是容易的。
+	进入函数内空间内交换以改变实参也有方法做到。
+	结构体之间更加容易。因为结构体就是极强的存档，不受什么形参（形参确实交换了，但实参没被修改）影响。
+	函数用形参当然是有好处的，否则你不想影响的却影响了，那难受多了。在此不讲更多。
+	形参造成如果要改变实参，必须确确实实得到实参。所以必须在基础上再取实参的地址。
+	
+	存到另一个名称（引用）还怕什么？
+	
+	修改一个变量的值，不影响存在另一（名称标识的）内存空间存储的值。
+	不然数据丢失呀！
 	*/
 	switch (current_player)
 	{
@@ -178,7 +187,6 @@ void 举棋_完全随机(Game *game, TheStep *着法)
 	game->chessBoard[着法->from_index], 着法->from_index);
 	getchar();
 	
-	
 	// 将选到的棋子的索引转坐标
 	索引转坐标(GYF_Debug_Mode[1]?0:着法->from_index, 着法->from_coord);
 	着法->from_x=着法->from_coord[0];
@@ -195,7 +203,6 @@ void 举棋_完全随机(Game *game, TheStep *着法)
 		goto start;
 	}
 	printf("车的本次落点索引：%d\n",着法->to_index_of_move);
-
 }
 
 // 落棋
@@ -220,7 +227,11 @@ void 落棋(Game *game, TheStep *着法)
 	
 	move_to_index可能遇空，可能遇敌。
 	遇空，基础变化。
-	遇敌，除了基础变化以外，敌方可选棋子必须减少。
+	遇敌，除了基础变化以外，敌方可选棋子必须减少一个。
+	这时，全场棋子索引必定出现重复的，要去重，所以也要减少一个。
+	因为在全场棋子索引中，同样的索引，新棋刚刚占领，旧棋已经死亡，不能有双方棋同时占一个索引。
+	
+	棋盘内容不需要变化，因为旧棋内容已经被新棋内容覆盖。	
 	*/	
 	
 	// 移动后必然的消失并替换
@@ -237,10 +248,15 @@ void 落棋(Game *game, TheStep *着法)
 		printf("当前玩家(0红1黑):%d\n",current_player);
 		printf("判断该棋位情况(-1空1敌0己):%d\n", 棋位内容是哪种情况);
 		
-		//
+		// 我知道此处为什么无法删除单方索引数量了。
+		// 因为虽然当前应对方的棋子数量改变了，但这改变之前的值却是通过赋值得到的。
+		// 想要改变红棋数量。而最初却是：当前应对方的棋子数量 = 红棋数量。
+		// 那么，当前应对方的棋子数量--，怎么影响红棋数量呢？
+		// 除非能够得到红棋数量的地址。
+		// 就像b=3，a=b。这时a存放3。a=2，修改了a，a存放2。但b仍然存放3。
+		// 所以，这就是为什么结构体重要、指针重要。比大量赋值覆盖好太多了。
 		remove_num(game->当前应对方的棋子的索引数组, ofsv_move_to, &game->当前应对方的棋子数量);
 		remove_num(game->全场棋子的索引数组, ofsv_move_to, &game->全场棋子数量);
-
 	}
 	
 	// 完成落点
