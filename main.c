@@ -3,9 +3,11 @@
 #include <time.h>
 #include <ctype.h>
 #include <stdbool.h>
+#define DEBUG printf("---debug位置---\n行号:%d\n文件名:<%s>",__LINE__,__FILE__);getchar();
 
 #include <include/config.h>
 #include <include/Chess_Operate.h>
+
 
 /*
 《调试模式设置》
@@ -124,25 +126,50 @@ void Game_决定当前操作方与应对方信息(Game *game)
 	修改一个变量的值，不影响存在另一（名称标识的）内存空间存储的值。
 	不然数据丢失呀！
 	*/
-	switch (current_player)
+	
+	if (第几回合==1)
 	{
-		case 0:
-		game->当前操作方的棋子的索引数组 = game -> 红棋索引数组;
-		game->当前操作方的棋子数量 = game -> 红棋数量;
-		game->当前应对方的棋子的索引数组 = game -> 黑棋索引数组;
-		game->当前应对方的棋子数量 = game -> 黑棋数量;
-		break;
+		switch (current_player)
+		{
+			case 0:
+			game->当前操作方的棋子的索引数组 = game -> 红棋索引数组;
+			game->当前操作方的棋子数量 = game -> 红棋数量;
+			game->当前应对方的棋子的索引数组 = game -> 黑棋索引数组;
+			game->当前应对方的棋子数量 = game -> 黑棋数量;
+			break;
+			
+			case 1:
+			game->当前操作方的棋子的索引数组 = game -> 黑棋索引数组;
+			game->当前操作方的棋子数量 = game -> 黑棋数量;
+			game->当前应对方的棋子的索引数组 = game -> 红棋索引数组;
+			game->当前应对方的棋子数量 = game -> 红棋数量;
+			break;
+			
+			default:
+			break;
+		}
+	}
+	else
+	{
+		short temp_棋子数量, *temp_棋子的索引数组;
 		
-		case 1:
-		game->当前操作方的棋子的索引数组 = game -> 黑棋索引数组;
-		game->当前操作方的棋子数量 = game -> 黑棋数量;
-		game->当前应对方的棋子的索引数组 = game -> 红棋索引数组;
-		game->当前应对方的棋子数量 = game -> 红棋数量;
-		break;
+		temp_棋子数量 = game->当前操作方的棋子数量;
+		game->当前操作方的棋子数量 = game->当前应对方的棋子数量;
+		game->当前应对方的棋子数量 = temp_棋子数量;
 		
-		default:
-		break;
-	}	
+		puts("⚡️决定双方信息时！");
+		printf("交换索引数组之前：%p, %p\n", game->当前操作方的棋子的索引数组, game->当前应对方的棋子的索引数组);		
+		Game_show(game);
+		
+		temp_棋子的索引数组 = game->当前操作方的棋子的索引数组;
+		game->当前操作方的棋子的索引数组 = game->当前应对方的棋子的索引数组;
+		game->当前应对方的棋子的索引数组 = temp_棋子的索引数组;
+		printf("交换索引数组之后：%p, %p\n", game->当前操作方的棋子的索引数组, game->当前应对方的棋子的索引数组);
+		Game_show(game);
+		
+	}
+	
+	
 }
 
 // - - - 举 棋 - - -
@@ -223,9 +250,9 @@ void 落棋(Game *game, TheStep *着法)
 	short ofsv_move_to = 着法->to_index_of_move;
 	char nullpos='o';
 	
+	puts("⚡️落棋之前看一下索引信息！");
 	Game_show(game);
-	Game_决定当前操作方与应对方信息(game);
-	
+
 	/*
 	from_index内容必定变空。
 	move_to_index内容必定变移动的棋。
@@ -408,6 +435,7 @@ void main()
 	
 	// 缩小可选棋子：场上棋子数量 -> 单方棋子数量
 	Game_决定当前操作方与应对方信息(game);
+	puts("⚡️决定双方信息之后，选棋之前看一下棋子信息！");
 	Game_show(game);
 	
 	// 举棋：选棋与可落点计算
