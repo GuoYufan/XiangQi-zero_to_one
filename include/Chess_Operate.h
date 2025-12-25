@@ -32,7 +32,7 @@ struct 棋步信息
 
 // 开局
 void 先填满默认空(char *);
-void show(char *);
+void show_棋盘(char *);
 bool 是否有效索引(short index);
 short 坐标转索引(short pos_x, short pos_y);
 bool 索引转坐标(short index, short *单个坐标数组);
