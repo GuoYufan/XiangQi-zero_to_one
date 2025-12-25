@@ -1,7 +1,7 @@
 # XiangQi_zero-to-one
 中国象棋从零开始
 
-项目目录下`<main.c>`开头设置全局变量debug模式：
+## 项目目录下`<main.c>`开头设置全局变量debug模式：
 bool GYF_Debug_Mode[2]={false, false};
 设置为：
 {true,false}
