@@ -70,7 +70,12 @@ void Game_show(Game *self)
 	printf("红棋数量：%d\n",self->红棋数量);
 	
 	show_整数数组(self->当前操作方的棋子的索引数组, self->当前操作方的棋子数量, "当前操作方的棋子的索引数组"); putchar(10);
-	printf("当前操作方的棋子数量：%d\n",self->当前操作方的棋子数量);getchar();	
+	printf("当前操作方的棋子数量：%d\n",self->当前操作方的棋子数量);
+	
+	show_整数数组(self->当前应对方的棋子的索引数组, self->当前应对方的棋子数量, "当前应对方的棋子的索引数组"); putchar(10);
+	printf("当前应对方的棋子数量：%d\n",self->当前应对方的棋子数量);getchar();
+	
+	
 }
 
 
@@ -255,7 +260,10 @@ void 落棋(Game *game, TheStep *着法)
 		// 除非能够得到红棋数量的地址。
 		// 就像b=3，a=b。这时a存放3。a=2，修改了a，a存放2。但b仍然存放3。
 		// 所以，这就是为什么结构体重要、指针重要。比大量赋值覆盖好太多了。
+		puts("⚡️《检查对当前应对方的棋子数量进行减少是否成功》");
+		printf("原数量：%d\n", game->当前应对方的棋子数量);
 		remove_num(game->当前应对方的棋子的索引数组, ofsv_move_to, &game->当前应对方的棋子数量);
+		printf("进行删除操作后数量：%d\n", game->当前应对方的棋子数量);
 		remove_num(game->全场棋子的索引数组, ofsv_move_to, &game->全场棋子数量);
 	}
 	
