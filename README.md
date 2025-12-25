@@ -11,7 +11,7 @@
 
 > {false,true}
 
-**表示关闭deug信息输出，开启测试**
+**表示关闭dedug信息输出，开启测试**
 
 > {true, true}
 
