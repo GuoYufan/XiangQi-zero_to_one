@@ -6,13 +6,17 @@
 
 设置为：
 > {true,false}
+
 **表示开启debug信息输出，关闭测试**
 
 > {false,true}
-表示关闭deug信息输出，开启测试
+
+**表示关闭deug信息输出，开启测试**
 
 > {true, true}
-表示debug模式全开
+
+**表示debug模式全开**
 
 > {false, false}
-表示debug模式全关
+
+**表示debug模式全关**
