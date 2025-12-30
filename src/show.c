@@ -14,6 +14,8 @@ void show_棋盘(char *chessBoard)
 	char *ptr_chsBd = chessBoard;
 	for (short y = 0; y < HEIGHT; y++)
 	{
+		if (y == HEIGHT/2)
+		puts("楚河\t汉界");
 		for (short x = 0; x < WIDTH; x++, ptr_chsBd++)
 		{
 			char c = *ptr_chsBd;

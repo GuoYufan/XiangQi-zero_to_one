@@ -21,21 +21,21 @@ index 10 -> (1,3)
 可平左步数 = 横坐标
 可平右步数 = 最大横坐标 - 横坐标
 */
-short 计算可移动步数(short *单个坐标数组, char *移动方向)
+short 车_计算最理想可移动步数(short *单个坐标数组, char *移动方向)
 {
 	if (strstr(移动方向, "退"))
 		return HEIGHT - 1 - 单个坐标数组[1];
 	
-	else if (strstr(移动方向, "进"))
+	if (strstr(移动方向, "进"))
 		return 单个坐标数组[1];
 	
-	else if (strstr(移动方向, "平左"))
+	if (strstr(移动方向, "平左"))
 		return 单个坐标数组[0];
 		
-	else if (strstr(移动方向, "平右"))
+	if (strstr(移动方向, "平右"))
 		return WIDTH - 1 - 单个坐标数组[0];
 		
-	else return 0;
+	return 0;
 }
 
 // -1空0己1敌
@@ -44,15 +44,14 @@ short 计算可移动步数(short *单个坐标数组, char *移动方向)
 
 short 判断该棋位内容情况(char pos_content)
 {
-	if (GYF_Debug_Mode[0])
+	if (gyf_debug_mode->DoesMsgPrint)
 	{
-	printf("44L:判断该棋位情况: %c\n"
+		printf("44L:判断该棋位情况: %c\n"
 	       "是否无棋子：%s\n"
 	       "当前玩家：%s\n",
 	       pos_content, 
 	       pos_content=='o'?"是":"否",
-	       current_player?"黑方":"红方");
-	getchar();
+	       current_player?"黑方":"红方"); getchar();
 	}
 	
 	// 空位：可落棋
@@ -73,7 +72,7 @@ short 判断该棋位内容情况(char pos_content)
 		default:
 		break;
 	}
-	if (GYF_Debug_Mode[0])
+	if (gyf_debug_mode->DoesMsgPrint)
 	{
 	printf("有棋子，是否己方？：%s\n",is_my_piece?"✅":"❌");
 	getchar();
@@ -89,7 +88,7 @@ short 判断该棋位内容情况(char pos_content)
 	
 }
 
-short 车的可移动步数缩小(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向)
+short 车_可移动步数缩小(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向)
 {
 	short 可移动步数 = 0;
 	short from_x=选到的棋子的坐标数组[0];
@@ -108,10 +107,10 @@ short 车的可移动步数缩小(char *chessBoard, short *选到的棋子的坐
 		else if (strstr(移动方向, "平右"))
 			to_x++;
 		to_index = 坐标转索引(to_x, to_y);
-		if (GYF_Debug_Mode[0]) printf("x%d,y%d,to%d", to_x, to_y, to_index);
+		if (gyf_debug_mode->DoesMsgPrint) printf("x%d,y%d,to%d", to_x, to_y, to_index);
 
 		//printf("%d,%c\n",to_index, chessBoard[to_index]);
-		if (GYF_Debug_Mode[0]) printf("进入判断，移动方向:%s，可移动步数:%d\n",移动方向, 可移动步数);
+		if (gyf_debug_mode->DoesMsgPrint) printf("进入判断，移动方向:%s，可移动步数:%d\n",移动方向, 可移动步数);
 		/*
 		《任何时候：超出尽头时/走到棋盘外时》
 		此时可移动步数已计算完成，且量刚好足够。
@@ -155,7 +154,7 @@ short 车的可移动步数缩小(char *chessBoard, short *选到的棋子的坐
 }
 
 // 单点得
-short 车的可落点索引之单点(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向, short 本次移动步数)
+short 车_获取可落点索引之单点(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向, short 本次移动步数)
 {
 	short from_x=选到的棋子的坐标数组[0];
 	short from_y=选到的棋子的坐标数组[1];
@@ -180,13 +179,14 @@ short 车的可活动范围缩小及准备移动到的随机落点(char *chessBo
 	short 可移动步数数组[4];
 	char *移动方向数组[4] = {"进", "退", "平左", "平右"};
 	short to_index;
-	short *可落点索引数组 = malloc ( sizeof (short ) * 3);
-	short 可落点数量 = 0;
+	short 可落点索引数组_当前分配空间大小 = 5;
+	short *可落点索引数组 = malloc ( sizeof (short ) * 可落点索引数组_当前分配空间大小);
+	short 可落点数量 = 0;	
 	
 	// 最理想可选移动方向及可移动步数
 	for (short i=0; i<4; i++)
 	{
-		可移动步数数组[i] = 计算可移动步数(选到的棋子的坐标数组, 移动方向数组[i]);
+		可移动步数数组[i] = 车_计算最理想可移动步数(选到的棋子的坐标数组, 移动方向数组[i]);
 	}
 	//putchar(10);
 	
@@ -195,7 +195,7 @@ short 车的可活动范围缩小及准备移动到的随机落点(char *chessBo
 	{
 		if (可移动步数数组[i])
 		{
-			可移动步数数组[i] = 车的可移动步数缩小(chessBoard, 选到的棋子的坐标数组, 移动方向数组[i]);
+			可移动步数数组[i] = 车_可移动步数缩小(chessBoard, 选到的棋子的坐标数组, 移动方向数组[i]);
 	
 		}
 		//printf ("可%s%d步\n", 移动方向数组[i], 可移动步数数组[i]);
@@ -209,11 +209,28 @@ short 车的可活动范围缩小及准备移动到的随机落点(char *chessBo
 	{
 		if (可移动步数数组[i])
 		{					
-			for ( short j=1; j<=可移动步数数组[i]; j++,可落点数量++)
+			for ( short 本次移动步数=1; 本次移动步数<=可移动步数数组[i]; 本次移动步数++)
 			{
-				to_index = 车的可落点索引之单点(chessBoard, 选到的棋子的坐标数组, 移动方向数组[i], j);
-				printf("%s%d步得索引%d\n", 移动方向数组[i], j, to_index);
+				to_index = 车_获取可落点索引之单点(chessBoard, 选到的棋子的坐标数组, 移动方向数组[i], 本次移动步数);
+				printf("%s%d步得索引%d\n", 移动方向数组[i], 本次移动步数, to_index);
 				*(p++)=to_index;
+				可落点数量++;
+				if (可落点数量 >= 可落点索引数组_当前分配空间大小 )
+				{
+					if (gyf_debug_mode->DoesMsgPrint)
+						printf("【realloc前】可落点索引数组:%p 可落点数量:%d\n",可落点索引数组, 可落点数量);
+					
+					可落点索引数组_当前分配空间大小 *=2;
+					可落点索引数组 = (short *) realloc(可落点索引数组, 可落点索引数组_当前分配空间大小);
+					p=可落点索引数组;
+					p+=可落点数量;
+					
+					if (gyf_debug_mode->DoesMsgPrint)
+					{
+					printf("【realloc后】可落点索引数组:%p 可落点数量:%d\n",可落点索引数组, 可落点数量);		
+					printf("【realloc后】p-可落点索引数组-1:%d  以该索引取:%d\n",p-可落点索引数组-1, 可落点索引数组[p-可落点索引数组-1]);
+					}
+				}
 			}
 		}
 	}
@@ -225,7 +242,7 @@ short 车的可活动范围缩小及准备移动到的随机落点(char *chessBo
 	}
 	short 选到的落点索引 = 可落点索引数组[ rand()%可落点数量 ];
 
-	//printf("车打算落在%d\n", 选到的落点索引);
+	printf("车打算落在%d\n", 选到的落点索引);
 	
 	free(可落点索引数组);
 	return 选到的落点索引;
