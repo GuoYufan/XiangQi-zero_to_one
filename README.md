@@ -4,7 +4,7 @@
 ## 📖使用方法
 **一、项目目录下的`<include>`目录下的`<config.h>`文件中设置棋盘尺寸（宽度和高度）。**
 
-**二、项目目录下的`<src>`目录下的`<main.c>`开头全局变量结构体初始化函数内设置debug模式**
+**二、项目目录下的`<src>`目录下的`<main.c>`开头全局变量结构体初始化函数内设置debug模式。**
 
 ```
 GYF_Debug_Mode *gyf_debug_mode = NULL;
@@ -26,9 +26,9 @@ void GYF_Debug_Mode_init(GYF_Debug_Mode *self)
 
 ```
 
-**三、这个全局变量结构体的初始化会在`GYF_Debug_Mode_init`函数内进行。所以debug模式的相关设置在这个函数内。**
+**这个全局变量结构体的初始化会在`GYF_Debug_Mode_init`函数内进行。所以debug模式的相关设置在这个函数内。**
 
-设置为：
+**设置为：**
 > self->DoesMsgPrint=true;
 > self->DoesTest=false;
 
