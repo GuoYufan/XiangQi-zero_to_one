@@ -179,8 +179,8 @@ short 车的可活动范围缩小及准备移动到的随机落点(char *chessBo
 	short 可移动步数数组[4];
 	char *移动方向数组[4] = {"进", "退", "平左", "平右"};
 	short to_index;
-	short 可落点索引数组_当前分配空间大小 = 5;
-	short *可落点索引数组 = malloc ( sizeof (short ) * 可落点索引数组_当前分配空间大小);
+	//short 可落点索引数组_当前分配空间大小 = 5;
+	short *可落点索引数组 = malloc ( sizeof (short ) * (WIDTH-1+HEIGHT-1));
 	short 可落点数量 = 0;	
 	
 	// 最理想可选移动方向及可移动步数
@@ -215,6 +215,7 @@ short 车的可活动范围缩小及准备移动到的随机落点(char *chessBo
 				printf("%s%d步得索引%d\n", 移动方向数组[i], 本次移动步数, to_index);
 				*(p++)=to_index;
 				可落点数量++;
+				/*
 				if (可落点数量 >= 可落点索引数组_当前分配空间大小 )
 				{
 					if (gyf_debug_mode->DoesMsgPrint)
@@ -229,8 +230,8 @@ short 车的可活动范围缩小及准备移动到的随机落点(char *chessBo
 					{
 					printf("【realloc后】可落点索引数组:%p 可落点数量:%d\n",可落点索引数组, 可落点数量);		
 					printf("【realloc后】p-可落点索引数组-1:%d  以该索引取:%d\n",p-可落点索引数组-1, 可落点索引数组[p-可落点索引数组-1]);
-					}
-				}
+					}				
+				}*/
 			}
 		}
 	}
