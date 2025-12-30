@@ -43,11 +43,34 @@ void Game_更新全场棋子的索引数组(Game *self);
 void 倒转(char *chessBoard, short 棋子数量, short *棋子索引数组, short *倒转后的棋子索引数组);
 
 // 举棋之可落点的计算
-short 计算可移动步数(short *单个坐标数组, char *移动方向);
+// 车
+short 车_计算最理想可移动步数(short *单个坐标数组, char *移动方向);
 short 判断该棋位内容情况(char pos_content);
-short 车的可移动步数缩小(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向);
-short 车的可选落点索引之单点(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向, short 本次移动步数);
+short 车_可移动步数缩小(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向);
+short 车_获取可选落点索引之单点(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向, short 本次移动步数);
 short 车的可活动范围缩小及准备移动到的随机落点(char *chessBoard, short *选到的棋子的坐标数组);
+
+// 马
+short 马_近端_计算最理想可移动步数(short *单个坐标数组, char *移动方向);
+short 马_近端_可移动步数缩小(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向, short 最理想可移动步数);
+short 马_远端_获取可选落点索引之单点(char *chessBoard, short *选到的棋子的坐标数组, char *移动方向, short 哪边);
+short 马的可活动范围缩小及准备移动到的随机落点(char *chessBoard, short *选到的棋子的坐标数组);
+
+// 将每种棋子的唯一需要调用的计算函数统一起来
+void TheStep_update_toIndexOfMove(Game *game, TheStep *着法);
+
+// 炮
+bool 该直线移动方向是索引减小的吗(const char *移动方向);
+bool 该直线移动方向是纵坐标变化的吗(const char *移动方向);
+void assign_by_direction(short *var, short increment, const char *移动方向);
+short 炮_近端_计算最理想可移动步数(short *单个坐标数组, const char *移动方向);
+bool 判断棋位与边界距离是否在某个范围内(short pos_x, short pos_y, const char *移动方向, short farthest);
+short 炮_近端_可移动步数缩小(char *chessBoard, short *选到的棋子的坐标数组, const char *移动方向, short 最理想可移动步数);
+short 炮_近端_获取可选落点索引之单点(char *chessBoard, short *选到的棋子的坐标数组, const char *移动方向, short 本次移动步数);
+short 炮_远端_获取可选落点索引(char *chessBoard, short *选到的棋子的坐标数组, const char *移动方向, short 近端可移动步数);
+short 炮的可活动范围缩小及准备移动到的随机落点(char *chessBoard, short *选到的棋子的坐标数组);
+
+
 
 // 举棋之选棋
 
