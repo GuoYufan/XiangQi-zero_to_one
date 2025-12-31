@@ -43,7 +43,7 @@ void GYF_Debug_Mode_init(GYF_Debug_Mode *self)
 
 
 
-// 对结构体TheStep进行操作的函数
+// 对结构体TheStep进行操作的函数：查看即将落棋的这一步着法情况
 void TheStep_show(TheStep *self)
 {
 	printf("from_x:%d\tfrom_y:%d\n"
@@ -68,7 +68,7 @@ void show_整数数组(short *arr, short size, const char *prompt)
 	putchar(']');
 }
 
-// 随时查看场上棋子的索引数组情况
+// 对结构体Game进行操作的函数：随时查看场上棋子的索引数组情况
 void Game_show(Game *self)
 {
 	printf("🔎\n查看Game结构体信息");
@@ -106,11 +106,8 @@ void 交换两个指针值(void **ofsv, void **defsv)
 	则切换到ofsv是black，defsv是red。
 	*/
 	void **temp = ofsv;
-	//printf("118l:temp=ofsv:%p = %p\n",temp,ofsv);
 	*ofsv = *defsv;
-	//printf("120l:o=d:%p = %p\n", *ofsv, *defsv);
 	*defsv = *temp;
-	//printf("122l:d=t:%p = %p\n", *defsv, *temp);
 }
 
 
@@ -174,8 +171,7 @@ void Game_决定当前操作方与应对方信息(Game *game)
 		// 交换当前xx方的索引数组
 		temp_棋子的索引数组 = game->当前操作方的棋子的索引数组;
 		game->当前操作方的棋子的索引数组 = game->当前应对方的棋子的索引数组;
-		game->当前应对方的棋子的索引数组 = temp_棋子的索引数组;
-		
+		game->当前应对方的棋子的索引数组 = temp_棋子的索引数组;		
 		
 		if (gyf_debug_mode->DoesMsgPrint)
 		{		
@@ -233,8 +229,9 @@ void 举棋_选取被移动的棋子(Game *game, TheStep *着法)
 }
 
 /*
-更新着法落点
-暂未支持炮的可活动范围
+更新着法落点。
+已支持可活动范围的：
+车、马、炮。
 */
 void TheStep_update_toIndexOfMove(Game *game, TheStep *着法)
 {
@@ -440,11 +437,27 @@ void main()
 	*/
 	short 开局多个棋子的坐标二维数组[][2] =
 	{
-		{2, 0}, {2, 2}, {1, 3},
-		{3, 5}, {4, 1}, {2, 4}
+		/*
+		规律：
+		黑12 红34
+		从中心往两边等距拉开
+		离原点最近：2与3
+		拉远：1与4
+		对角线对称坐标相加：
+		横坐标相加必等于最末横坐标。
+		纵坐标相加必等于最末纵坐标。
+		
+		*/
+		// 黑双车/红双车
+		{0, 0}, {8, 0}, {0, 9}, {8, 9},
+		// 黑双马/红双马
+		{1, 0}, {7, 0}, {1, 9}, {7, 9},
+		// 黑双炮/红双炮
+		{1, 2}, {7, 2}, {1, 7}, {7, 7},
+
 	};
 	short 坐标数量 = sizeof (开局多个棋子的坐标二维数组) / sizeof (short ) /2;
-	const char *开局多个棋子的对应内容数组 = "CcMmPp";
+	const char *开局多个棋子的对应内容数组 = "CCccMMmmPPpp";
 
 	
 	// 对容器内任意数量的元素进行循环轮流（以对索引进行循环轮流来实现）
@@ -477,11 +490,9 @@ void main()
 	// 开局场上棋子信息：索引、数量
 	// （以此为基础无限变化，每次变化极小量：后续只需要进行最少且最多两个点变化引起的变化）
 	
-	game->全场棋子的索引数组 = (short *) malloc ( sizeof ( short )*坐标数量);
-	
-	game->黑棋索引数组 = (short *) malloc ( sizeof ( short )*坐标数量);
-	
-	game->红棋索引数组 = (short *) malloc ( sizeof ( short )*坐标数量);
+	game->全场棋子的索引数组 = (short*) malloc ( sizeof ( short ) * 坐标数量);	
+	game->黑棋索引数组 = (short*) malloc ( sizeof ( short ) * 坐标数量);
+	game->红棋索引数组 = (short*) malloc ( sizeof ( short ) * 坐标数量);
 	
 	Game_更新全场棋子的索引数组( game );
 	Game_show( game );	
