@@ -2,8 +2,8 @@
    #ifndef CONFIG_H
    #define CONFIG_H
 
-   #define WIDTH 5   // 棋盘宽度
-   #define HEIGHT 6 // 棋盘高度
+   #define WIDTH 9   // 棋盘宽度
+   #define HEIGHT 10 // 棋盘高度
 
    #endif
 
@@ -30,4 +30,5 @@ extern short current_player;
 extern short 第几回合;
 extern GYF_Debug_Mode *gyf_debug_mode;
 
-void ColorCode_init(ColorCode *self);
+void ColorCode_init(ColorCode* self);
+void GYF_Debug_Mode_init(GYF_Debug_Mode* self);
